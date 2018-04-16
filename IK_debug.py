@@ -61,6 +61,39 @@ def test_code(test_case):
     
     ########################################################################################
     ## 
+        ### Create symbols for joint variables
+	    q1, q2, q3, q4, q5, q6, q7 = symbols('q1:8')
+	    d1, d2, d3, d4, d5, d6, d7 = symbols('d1:8')
+	    a0, a1, a2, a3, a4, a5, a6 = symbols('a0:7')
+	    alpha0, alpha1, alpha2, alpha3, alpha4, alpha5, alpha6 = symbols('alpha0:7')
+
+	# Create Modified DH parameters
+        s = {alpha0:     0, a0:      0, d1:  0.75, q1:       q1,
+             alpha1: -pi/2, a1:   0.35, d2:     0, q2: -pi/2+q2,
+             alpha2:     0, a2:   1.25, q3:     0, q3:       q3,
+             alpha3: -pi/2, a3: -0.054, d4:   1.5, q4:       q4,
+             alpha4:  pi/2, a4:      0, d5:     0, q5:       q5,
+             alpha5: -pi/2, a5:      0, q6:     0, q6:       q6,
+             alpha6:     0, a6:      0, d7: 0.303, q7:        0,}
+
+    # Define Modified DH Transformation matrix
+        def DH_Tmatrix(alpha, a, d, q)
+            T = Matrix([[             cos(q),            -sin(q),            0,              a],
+                        [ sin(q1)*cos(alpha), cos(q1)*cos(alpha),  -sin(alpha), -sin(alpha0)*d],
+                        [ sin(q1)*sin(alpha), cos(q1)*sin(alpha),   cos(alpha),  cos(alpha0)*d],
+                        [                  0,                  0,            0,              1]])
+            return T
+
+    # Create individual transformation matrices
+        T0_1 = DH_Tmatrix(alpha0, a0, d1, q1).subs(s)
+        T1_2 = DH_Tmatrix(alpha1, a1, d2, q2).subs(s)
+        T2_3 = DH_Tmatrix(alpha2, a2, d3, q3).subs(s)
+        T3_4 = DH_Tmatrix(alpha3, a3, d4, q4).subs(s)
+        T4_5 = DH_Tmatrix(alpha4, a4, d5, q5).subs(s)
+        T5_6 = DH_Tmatrix(alpha5, a5, d6, q6).subs(s)
+        T6_G = DH_Tmatrix(alpha6, a6, d7, q7).subs(s)
+
+        T0_G = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_G
 
     ## Insert IK code here!
     
