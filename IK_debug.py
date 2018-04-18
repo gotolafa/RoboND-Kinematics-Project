@@ -70,10 +70,10 @@ def test_code(test_case):
 	# Create Modified DH parameters
     s = {alpha0:     0, a0:      0, d1:  0.75, q1:       q1,
          alpha1:-pi/2., a1:   0.35, d2:     0, q2:-pi/2.+q2,
-         alpha2:     0, a2:   1.25, q3:     0, q3:       q3,
+         alpha2:     0, a2:   1.25, d3:     0, q3:       q3,
          alpha3:-pi/2., a3: -0.054, d4:   1.5, q4:       q4,
          alpha4: pi/2., a4:      0, d5:     0, q5:       q5,
-         alpha5:-pi/2., a5:      0, q6:     0, q6:       q6,
+         alpha5:-pi/2., a5:      0, d6:     0, q6:       q6,
          alpha6:     0, a6:      0, d7: 0.303, q7:        0}
 
     # Define Modified DH Transformation matrix
@@ -85,15 +85,15 @@ def test_code(test_case):
         return T
 
     # Create individual transformation matrices
-    T0_1 = DH_Tmatrix(alpha0, a0, d1, q1).subs(s)
-    T1_2 = DH_Tmatrix(alpha1, a1, d2, q2).subs(s)
-    T2_3 = DH_Tmatrix(alpha2, a2, d3, q3).subs(s)
-    T3_4 = DH_Tmatrix(alpha3, a3, d4, q4).subs(s)
-    T4_5 = DH_Tmatrix(alpha4, a4, d5, q5).subs(s)
-    T5_6 = DH_Tmatrix(alpha5, a5, d6, q6).subs(s)
+    T0_1 =  DH_Tmatrix(alpha0, a0, d1, q1).subs(s)
+    T1_2 =  DH_Tmatrix(alpha1, a1, d2, q2).subs(s)
+    T2_3 =  DH_Tmatrix(alpha2, a2, d3, q3).subs(s)
+    T3_4 =  DH_Tmatrix(alpha3, a3, d4, q4).subs(s)
+    T4_5 =  DH_Tmatrix(alpha4, a4, d5, q5).subs(s)
+    T5_6 =  DH_Tmatrix(alpha5, a5, d6, q6).subs(s)
     T6_EE = DH_Tmatrix(alpha6, a6, d7, q7).subs(s)
 
-    T0_EE = simplify(T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_EE)
+    T0_EE = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_EE
 
     # Extract end-effector position and orientation from request
     # px,py,pz = end-effector position
@@ -148,7 +148,7 @@ def test_code(test_case):
     angle_b = acos((side_a*side_a + side_c*side_c -side_b*side_b) / (2 * side_a * side_c))
     angle_c = acos((side_a*side_a + side_b*side_b -side_c*side_c) / (2 * side_a * side_b))
 
-    theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0]*WC[0] + WC[1]*WC[1] - 0.35))
+    theta2 = pi/2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0]*WC[0] + WC[1]*WC[1]) - 0.35)
     theta3 = pi/2 - (angle_b + 0.036)
  
     R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
@@ -168,7 +168,7 @@ def test_code(test_case):
     ## as the input and output the position of your end effector as your_ee = [x,y,z]
 
     FK = T0_EE.evalf(subs={q1: theta1, q2: theta2, q3: theta3, q4: theta4, q5:theta5, q6: theta6})
-
+    
     ## End your code input for forward kinematics here!
     ########################################################################################
 
@@ -198,6 +198,7 @@ def test_code(test_case):
     t_4_e = abs(theta4-test_case[2][3])
     t_5_e = abs(theta5-test_case[2][4])
     t_6_e = abs(theta6-test_case[2][5])
+
     print ("\nTheta 1 error is: %04.8f" % t_1_e)
     print ("Theta 2 error is: %04.8f" % t_2_e)
     print ("Theta 3 error is: %04.8f" % t_3_e)
@@ -214,6 +215,9 @@ def test_code(test_case):
         ee_x_e = abs(your_ee[0]-test_case[0][0][0])
         ee_y_e = abs(your_ee[1]-test_case[0][0][1])
         ee_z_e = abs(your_ee[2]-test_case[0][0][2])
+
+        print ("\n1: %04.8f" % your_ee[0])
+
         ee_offset = sqrt(ee_x_e**2 + ee_y_e**2 + ee_z_e**2)
         print ("\nEnd effector error for x position is: %04.8f" % ee_x_e)
         print ("End effector error for y position is: %04.8f" % ee_y_e)
