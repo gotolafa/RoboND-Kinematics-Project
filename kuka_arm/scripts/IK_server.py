@@ -59,12 +59,8 @@ def handle_calculate_IK(req):
         T5_6 = DH_Tmatrix(alpha5, a5, d6, q6).subs(s)
         T6_G = DH_Tmatrix(alpha6, a6, d7, q7).subs(s)
 
-        T0_G = simplify(T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_G)
-    
     # Extract rotation matrices from the transformation matrices
-
-
-    ####
+        T0_G = simplify(T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_G)
 
         # Initialize service response
         joint_trajectory_list = []
